@@ -29,7 +29,6 @@ class IdentityBlock(nn.Module):
             nn.BatchNorm2d(out_channels)
         )
 
-
     def forward(self, X):
         '''
         Forward pass through network
