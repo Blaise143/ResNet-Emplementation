@@ -5,39 +5,36 @@ import torch.functional as F
 
 class IdentityBlock(nn.Module):
 
-    def __init__(self,  filters, kernel_size, f,in_channels=3):
+    def __init__(self, in_channels=3, out_channels=16):
         '''
         :param X: data
         :param in_channels: Number of channels from previous input
         :param filters: Number of filters
         :param kernel_size: size of kernel
         '''
-        super().__init__(IdentityBlock, self)
-
-        f1, f2, f3 = filters
-
-        self.X_shortcut = X
+        super(IdentityBlock, self).__init__()
 
         self.main_route = nn.Sequential(
-            nn.Conv2d(in_channels=in_channels, out_channels=f1, kernel_size=1),
-            nn.BatchNorm2d(num_features=f1),
+            nn.Conv2d(in_channels=in_channels, out_channels=out_channels//4, kernel_size=3, padding=0, stride=1),
+            nn.BatchNorm2d(out_channels//4),
+            nn.ReLU(inplace=True),
+
+            nn.Conv2d(in_channels=out_channels//4, out_channels=out_channels//8,
+                      kernel_size=7, padding=0, stride=2),
+            nn.BatchNorm2d(out_channels//8),
             nn.ReLU(),
 
-            nn.Conv2d(in_channels=f1, out_channels=f2, kernel_size=f, padding=0),
-            nn.BatchNorm2d(num_features=f2),
-            nn.ReLU(),
-
-            nn.Conv2d(in_channels=f2, out_channels=f3, kernel_size=1, padding=0),
-            nn.BatchNorm2d(num_features=f3),
+            nn.Conv2d(in_channels=out_channels//8, out_channels=out_channels, kernel_size=7, padding=0, stride=3),
+            nn.BatchNorm2d(out_channels)
         )
 
-        self.connection = X_shortcut + self.main_route
-        self.final_activation = nn.ReLU()
 
     def forward(self, X):
+        X_shortcut = X
         X = self.main_route(X)
-        X = self.connection(X)
-        X = self.final_activation(X)
+        X = X + X_shortcut
+        X = nn.relu(X)
         return X
 
-trial = IdentityBlock((4,5,6), 3, 3,3)
+trial = IdentityBlock()
+print(trial)
