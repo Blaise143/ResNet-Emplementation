@@ -2,6 +2,7 @@ import pandas as pd
 import torch, torchvision
 import torch.nn as nn
 import torch.functional as F
+from torchsummary import summary
 
 class IdentityBlock(nn.Module):
 
@@ -109,4 +110,4 @@ class BlaiseResNet(nn.Module):
         X = self.fully_connected_layer(X)
         return X
 
-print(BlaiseResNet(num_classes=2))
+summary(BlaiseResNet(num_classes=2))
